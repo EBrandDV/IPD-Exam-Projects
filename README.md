@@ -15,4 +15,4 @@ A tool that can convert between the decimal, binary and roman numeral system wit
 A tool that import the results of soccer mathces from .txt files, processes the data, and creates a sorted scoreboard with the results of the tournament.
 
 ### Project 3: Card Game
-A card game made with object oriented programming. The card game automatically plays ifself with a given amount of players.
+A card game made with object oriented programming. The card game automatically plays itself with a given amount of players.
