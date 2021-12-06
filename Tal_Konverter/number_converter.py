@@ -1,3 +1,11 @@
+'''
+Link til github: https://github.com/MrKahr/Eksamensprogrammer
+Anden eksamens opgave i IPD: Number converter.
+@author: Eric van den Brand, evande20@student.aau.dk
+@co-authors: Mads Andersen, Daniel Hansen, Thor Skatka og Andreas Hansen
+Beskrivelse: Programmet converterer bruger defineret tal, blandt binære tal, romer tal og 10 tals systemet.
+'''
+
 rom_num = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
 integers = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
 
@@ -24,6 +32,7 @@ def IntToBin(x):
         x = x // 2
     
     z = a[::-1]  # Reverse the string
+    
     return z
 
 
@@ -38,8 +47,9 @@ def ParIntRom(x):
         while (x // integers[i]) > 0:
             rom_str += rom_num[i]
             x -= integers[i]
-        i += 1
         
+        i += 1
+    
     return rom_str  # It then returns rom_str
 
 
@@ -57,6 +67,7 @@ def IntToRom(x):
         
         # And the roman numeral gets printed as one big multiline string
         print_it_all = f'''{roof}\n{print_ready_rom}'''
+        
         return print_it_all
     
     else:  # If x < 4000 it just returns ParIntRom(x)
@@ -64,7 +75,7 @@ def IntToRom(x):
 
 
 # ! BinToInt converts binary numbers to integers
-def BinToInt(x):
+def BinToInt(x, formatted= True):
     x = [int(x) for x in str(x)]  # Make a list of the digits.
     t = 0  # Make a 'total'
     
@@ -72,7 +83,10 @@ def BinToInt(x):
     for num in x:
         t = 2 * t + num
     
-    number = FormatNumber(t)
+    if formatted:
+        number = FormatNumber(t)
+    else:
+        number = t
     
     return number
 
@@ -94,7 +108,7 @@ def ParRomInt(x):
     return value
 
 
-def RomToInt(x):
+def RomToInt(x, formatted= True):
     # Space means that the first part is multiplied by 1000
     if ' ' in x:
         # Splits string into big_rom and tiny_rom
@@ -106,11 +120,21 @@ def RomToInt(x):
         
         # Adds big_int * 1000 and tiny_int together
         number = (big_int * 1000) + tiny_int
-        return FormatNumber(number)
+        
+        if formatted:
+            return FormatNumber(number)
+        
+        else:
+            return number
     
-    else:  # If x has no ' ', run ParIntRom and return result
+    else: # If x has no ' ', run ParIntRom and return result
         number = ParRomInt(x)
-        return FormatNumber(number)
+        
+        if formatted:
+            return FormatNumber(number)
+        
+        else:
+            return number
 
 
 # ! Menu function is defined
@@ -125,6 +149,11 @@ def Menu():
         --->: ''')
         
         assert from_sys in ['1', '2', '3', '4']  # Checks if input is valid
+        
+        if from_sys == '4':  # Terminates program
+            print('You terminated the program')
+            
+            return
         
         user_number = input('''Please enter your number (if its a roman numeral of 4000 
         and above, please type a space after the part that needs to be multiple by 1000): 
@@ -145,10 +174,6 @@ def Menu():
                 if i != ' ':
                     assert i in rom_num
         
-        if from_sys == '4':  # Terminates program
-            print('You terminated the program')
-            return
-        
         to_sys = input('''Please choose the numerical system you want to convert to
         #1. Decimal
         #2. Binary
@@ -161,6 +186,7 @@ def Menu():
         # User tries to convert from and to the same numerical system
         if from_sys == to_sys:
             print('You are trying to convert one numerical system to the same. Please try again')
+            
             Menu()
         
         elif from_sys == '1':
@@ -175,7 +201,8 @@ def Menu():
                 print(BinToInt(user_number))
             
             elif to_sys == '3':  # bin to rom
-                bin_int = BinToInt(user_number)
+                bin_int = BinToInt(user_number, formatted= False)
+                
                 print(IntToRom(bin_int))  # int to rom
         
         elif from_sys == '3':
@@ -183,7 +210,8 @@ def Menu():
                 print(RomToInt(user_number))
             
             elif to_sys == '2':  # rom to bin
-                rom_int = RomToInt(user_number)
+                rom_int = RomToInt(user_number, formatted= False)
+                
                 print(IntToBin(rom_int))  # int to bin
         
         else:  # Loops for invalid input

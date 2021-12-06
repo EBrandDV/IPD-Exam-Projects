@@ -1,3 +1,11 @@
+'''
+Link til github: https://github.com/MrKahr/Eksamensprogrammer
+Første eksamens opgave i IPD: Sports resultater
+@author: Eric van den Brand, evande20@student.aau.dk
+@co-authors: Mads Andersen, Daniel Hansen, Thor Skatka og Andreas Hansen
+Beskrivelse: Programmet tager match data fra en gruppe tekst filer, og ved hjælp af dette laver et sorteret og overskueligt scoreboard. 
+'''
+
 import io #Package for reading "æ, ø and å"
 
 # Standings list
@@ -10,28 +18,29 @@ g_lost,      ttl_gls  = 4,5
 ttl_gls_c,   ttl_p    = 6,7
 
 
-# ! Filling standings with teams and scorecards
+# ! filling standings with teams and scorecards
 nations_file = 'nations.txt'
-team_file = io.open(nations_file,mode="r",encoding="utf-8") # Open file, read (r) and encoding is UTF-8 (æ, ø, å)
+team_file = io.open(nations_file,mode="r",encoding="utf-8") #Open file, read (r) and encoding is UTF-8 (æ, ø, å)
 
 teams = []
 
 
 def team_list():
-    for item in team_file: # For each country + newline, add to the list
-        teams.append(item.rstrip("\n")) # rstrip to strip "\n" from the right side of the string
+    for item in team_file: #For each country + newline, add to the list
+        teams.append(item.rstrip("\n")) #rstrip to strip "\n" from the right side of the string
+    
     return teams
 
 
 def add_team_scorecard(standings):
-    for team in teams: # Create lists within lists for every nation
-        team_scorecard = [team,0,0,0,0,0,0,0] # New list with nation and zeros for each type of score
+    for team in teams: #Create lists within lists for every nation
+        team_scorecard = [team,0,0,0,0,0,0,0] #New list with nation and zeros for each type of score
         standings.append(team_scorecard)
     
     return standings
 
 
-team_list() # Add items to nations
+team_list() #Add items to nations
 add_team_scorecard(standings) # Adds scorecards to standings
 
 
@@ -45,16 +54,16 @@ def find_position_in_standings(standings,this_team):
 
 # Stores who won or a tie as result
 def who_won(l_score, r_score):
+    # l_team wins = 0
     if l_score > r_score:
-        # l_team wins = 0
         return 0
     
+    # r_team wins = 1
     elif l_score < r_score:
-        # r_team wins = 1
         return 1
     
+    # Tie = 2
     else:
-        # Tie = 2
         return 2
 
 
@@ -64,9 +73,9 @@ def games_wdl(standings, l_team, r_team, result):
     standings[l_team][g_played] += 1
     standings[r_team][g_played] += 1
     
-    if result == 0:
-        # Adds 1 win and 1 loss to left team and right team respectively
-        # Adds 3 points for left team
+    # Adds 1 win and 1 loss to left team and right team respectively
+    # Adds 3 points for left team
+    if result == 0: 
         standings[l_team][g_won]  += 1
         standings[r_team][g_lost] += 1
         
@@ -74,9 +83,9 @@ def games_wdl(standings, l_team, r_team, result):
         
         return standings
     
+    # Adds 1 win and 1 loss to right team and left team respectively
+    # Adds 3 points for right team
     elif result == 1:
-        # Adds 1 win and 1 loss to right team and left team respectively
-        # Adds 3 points for right team
         standings[l_team][g_lost] += 1
         standings[r_team][g_won]  += 1
         
@@ -84,9 +93,9 @@ def games_wdl(standings, l_team, r_team, result):
         
         return standings
     
+    # Adds 1 draw to both teams
+    # Adds 1 point for both teams
     else:
-        # Adds 1 draw to both teams
-        # Adds 1 point for both teams
         standings[l_team][g_drawn] += 1
         standings[r_team][g_drawn] += 1
         
@@ -133,10 +142,12 @@ def fb_res(amount_of_rounds):
         try:
             file_path = 'round'+str(j)+'.txt'
             this_round_file = io.open(file_path,mode="r",encoding="utf-8") # Open file, read (r) and encoding is UTF-8 (æ, ø, å)
+            
             this_round = this_round_file.read() # Take strings from file
             
             try:
                 match_list = this_round.split('\n') # Create a list where we split file content by newline
+                
                 type_list = [] # Prepare a list split by goals and nations
                 
                 for item in match_list: # Take every list from matchlist
@@ -162,21 +173,23 @@ def fb_res(amount_of_rounds):
                     r_score_m = int(match[scores][r_score])
                     
                     add_standings(standings, l_team_m, r_team_m, l_score_m, r_score_m)
-                
+            
             except:
                 print(f'SyntaxError: round{j}.txt is formatted incorrectly.'+
                     f'\nStatus unknown for subsequent {amount_of_rounds - j} rounds')
+        
         except:
             print(f'TypeError: round{j}.txt does not exist.'+
-                f'\nStatus unknown for subsequent {amount_of_rounds - j} rounds')
+                    f'\nStatus unknown for subsequent {amount_of_rounds - j} rounds')
 
 
 # ! Format the text from the list
-def pretty(text, spaces, r_align = True): #Formula to format the text from the list
+def pretty(text, spaces= 3, r_align = True): #Formula to format the text from the list
     text = str(text) #Ensure type is str
     
     if r_align:
         return ((spaces-len(text))*" ") + text #Make sure the returns a value
+    
     else:
         return text + ((spaces-len(text))*" ")
 
@@ -199,16 +212,16 @@ def scoreboard(amount_of_rounds = 6):
     
     for item in sorted_standings: #Unmakes standings list, prints each item in list
         #For every list in standings, run the function
-        team_t    = pretty(item[team]     ,10,r_align = False) 
-        plays     = pretty(item[g_played] ,3)
-        wins      = pretty(item[g_won]    ,3)
-        draws     = pretty(item[g_drawn]  ,3)
-        losses    = pretty(item[g_lost]   ,3)
-        goals     = pretty(item[ttl_gls]  ,3)
-        g_against = pretty(item[ttl_gls_c],3)
-        points    = pretty(item[ttl_p]    ,3)
-        
+        team_t    = pretty(item[team], spaces= 10, r_align = False) 
+        plays     = pretty(item[g_played])
+        wins      = pretty(item[g_won])
+        draws     = pretty(item[g_drawn])
+        losses    = pretty(item[g_lost])
+        goals     = pretty(item[ttl_gls])
+        g_against = pretty(item[ttl_gls_c])
+        points    = pretty(item[ttl_p])
         result    = team_t + plays + wins + draws + losses + goals + " -" + g_against + points
+        
         print(result)
 
 
